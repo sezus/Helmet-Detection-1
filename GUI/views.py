@@ -7,30 +7,36 @@ import cv2
 import sys
 
 class MainApp(QWidget):
-    """ Main Class for GUI """
+
     def __init__(self):
         QWidget.__init__(self)
-        self.video_size = QSize(320, 240)
+        self.video_size = QSize(671, 321)
         self.setup_ui()
-        self.setup_camera()
 
     def setup_ui(self):
         """Initialize widgets."""
+
+        # buttons created
+        self.startButton = QPushButton("Start Streaming")
+        self.quitButton = QPushButton("Quit")
+
         self.image_label = QLabel()
         self.image_label.setFixedSize(self.video_size)
 
-        self.quit_button = QPushButton("Quit")
-        self.quit_button.clicked.connect(self.close)
-        # clicking button closes app
-
+        # layout for widgets
         self.main_layout = QVBoxLayout()
         self.main_layout.addWidget(self.image_label)
-        self.main_layout.addWidget(self.quit_button)
+        self.main_layout.addWidget(self.startButton)
+        self.main_layout.addWidget(self.quitButton)
 
         self.setLayout(self.main_layout)
 
+        self.startButton.clicked.connect(self.setup_camera)
+        self.quitButton.clicked.connect(self.close)
+
     def setup_camera(self):
         """Initialize camera."""
+
         self.capture = cv2.VideoCapture(0)
         self.capture.set(cv2.CAP_PROP_FRAME_WIDTH, self.video_size.width())
         self.capture.set(cv2.CAP_PROP_FRAME_HEIGHT, self.video_size.height())
@@ -41,6 +47,7 @@ class MainApp(QWidget):
 
     def display_video_stream(self):
         """Read frame from camera and repaint QLabel widget."""
+        
         _, frame = self.capture.read()
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         frame = cv2.flip(frame, 1)
